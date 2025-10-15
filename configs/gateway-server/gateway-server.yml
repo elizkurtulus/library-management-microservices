@@ -1,0 +1,38 @@
+spring:
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: book-service-route
+              uri: lb://book-service
+              predicates:
+                - Path=/api/v1/books/**
+            - id: category-service-route
+              uri: lb://category-service
+              predicates:
+                - Path=/api/v1/categories/**
+            - id: fine-service-route
+              uri: lb://fine-service
+              predicates:
+                - Path=/api/v1/fines/**
+            - id: loan-service-route
+              uri: lb://loan-service
+              predicates:
+                - Path=/api/v1/loans/**
+            - id: member-service-route
+              uri: lb://member-service
+              predicates:
+                - Path=/api/v1/members/**
+            - id: reservation-service-route
+              uri: lb://reservation-service
+              predicates:
+                - Path=/api/v1/reservations/**
+
+server:
+  port: 8888
+
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
