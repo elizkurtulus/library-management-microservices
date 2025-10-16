@@ -1,0 +1,41 @@
+services:
+  config-server:
+    image: tcell-config-server
+    ports:
+      - "8989:8989"
+  discovery-server:
+    image: tcell-discovery-server
+    ports:
+      - "8761:8761"
+  gateway-server:
+    image: tcell-gateway-server
+    ports:
+      - "8888:8888"
+    depends_on:
+      - config-server # first config-server works, gateway-server waits it
+    environment:
+      - CONFIG_URI=http://config-server:8989 # 'localhost' is not given, the name of container should be used
+  book-service:
+    image: tcell-book-service
+    ports:
+      - "8081:8081"
+  category-service:
+    image: tcell-category-service
+    ports:
+      - "8082:8082"
+  fine-service:
+    image: tcell-fine-service
+    ports:
+      - "8083:8083"
+  loan-service:
+    image: tcell-loan-service
+    ports:
+      - "8084:8084"
+  member-service:
+    image: tcell-member-service
+    ports:
+      - "8085:8085"
+  reservation-service:
+    image: tcell-reservation-service
+    ports:
+      - "8086:8086"

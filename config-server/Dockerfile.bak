@@ -1,0 +1,12 @@
+# single stage docker => do not recommend (image size is big)
+# os -> java -> maven
+FROM maven:3.9-eclipse-temurin-21
+
+# project -> run
+WORKDIR /app
+
+COPY . .
+
+RUN mvn clean package -DskipTests
+
+ENTRYPOINT ["java", "-jar", "target/config-server-0.0.1-SNAPSHOT.jar"]

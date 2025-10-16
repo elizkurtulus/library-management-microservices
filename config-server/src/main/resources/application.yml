@@ -5,13 +5,14 @@ spring:
     config:
       server:
         git:
-          uri: https://github.com/halitkalayci/4.5-microservices.git
+          uri: https://github.com/elizkurtulus/library-management-microservices.git
           default-label: master
           search-paths:
             - configurations
             - configurations/{application}
           clone-on-start: true
           force-pull: true
-          password: <token>
+          username: ${GIT_USERNAME:elizkurtulus}
+          password: ${GIT_MIC_PASSWORD:password}
 server:
   port: 8989
