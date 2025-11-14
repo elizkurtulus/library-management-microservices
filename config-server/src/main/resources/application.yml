@@ -15,4 +15,4 @@ spring:
           username: ${GIT_USERNAME:elizkurtulus}
           password: ${GIT_MIC_PASSWORD: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}
 server:
-  port: 8989
+  port: 8787
