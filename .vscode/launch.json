@@ -8,7 +8,8 @@
             "mainClass": "com.turkcell.config_server.ConfigServerApplication",
             "projectName": "config-server",
             "args": "",
-            "envFile": "${workspaceFolder}/.env"
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=52637 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=config-server"
         },
         {
             "type": "java",
@@ -18,7 +19,8 @@
             "mainClass": "com.turkcell.book_services.BookServicesApplication",
             "projectName": "book-service",
             "args": "",
-            "envFile": "${workspaceFolder}/.env"
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=52426 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=book-service"
         },
         {
             "type": "java",
@@ -27,6 +29,58 @@
             "cwd": "${workspaceFolder}",
             "mainClass": "com.turkcell.discovery_server.DiscoveryServerApplication",
             "projectName": "discovery-server",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=52661 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=discovery-server"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-CategoryServicesApplication<category-service>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.turkcell.category_services.CategoryServicesApplication",
+            "projectName": "category-service",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=53206 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=category-service"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-FineServicesApplication<fine-service>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.turkcell.fine_services.FineServicesApplication",
+            "projectName": "fine-service",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-LoanServicesApplication<loan-service>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.turkcell.loan_services.LoanServicesApplication",
+            "projectName": "loan-service",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-MemberServicesApplication<member-service>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.turkcell.member_services.MemberServicesApplication",
+            "projectName": "member-service",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-ReservationServicesApplication<reservation-service>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.turkcell.reservation_services.ReservationServicesApplication",
+            "projectName": "reservation-service",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
         }
