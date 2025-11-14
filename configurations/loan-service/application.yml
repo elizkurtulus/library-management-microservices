@@ -1,0 +1,6 @@
+server:
+  port: 8084
+
+eureka:
+  register-with-eureka: true
+  fetch-registry: true
