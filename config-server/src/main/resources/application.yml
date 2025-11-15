@@ -12,7 +12,5 @@ spring:
             - configurations/{application}
           clone-on-start: true
           force-pull: true
-          username: ${GIT_USERNAME:elizkurtulus}
-          password: ${GIT_MIC_PASSWORD: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}
 server:
   port: 8787
