@@ -1,4 +1,69 @@
 package com.turkcell.fine_services.rules;
 
+import com.turkcell.fine_services.entity.Fine;
+import com.turkcell.fine_services.repository.FineRepository;
+import jakarta.ws.rs.NotFoundException;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.UUID;
+
+@Component
 public class FineBusinessRules {
+    private final FineRepository fineRepository;
+
+    public FineBusinessRules(FineRepository fineRepository) {
+        this.fineRepository = fineRepository;
+    }
+
+    /**
+     * Ceza miktarının pozitif olması kuralı.
+     */
+    public void fineAmountMustBePositive(double amount) throws Exception {
+        if (amount <= 0)
+            throw new Exception("Ceza miktarı pozitif olmalıdır!");
+    }
+
+    /**
+     * Ceza kimliğine göre cezanın bulunması kuralı
+     */
+    public void fineMustExist(UUID fineId) {
+        Fine fine = fineRepository
+                .findById(fineId)
+                .orElseThrow(() -> new NotFoundException("Ceza " + fineId + " bulunamadı!"));
+    }
+
+    /**
+     * Ceza ödendiğinde güncellenemez kuralı
+     */
+    public void fineMustNotBePaidToUpdate(UUID fineId) throws Exception {
+        Fine fine = fineRepository
+                .findById(fineId)
+                .orElseThrow(() -> new NotFoundException("Ceza " + fineId + " bulunamadı!"));
+
+        if (fine.isPaid())
+            throw new Exception("Ödenmiş ceza güncellenemez!");
+    }
+
+    /**
+     * Üyenin ödenmemiş cezası olup olmadığını kontrol eder
+     *
+     * @param memberId Kontrol edilecek üye
+     * @return true eğer ödenmemiş ceza varsa, aksi halde false
+     */
+    public boolean hasUnpaidFines(UUID memberId) {
+        List<Fine> fines = fineRepository.findByMemberId(memberId);
+        return fines.stream().anyMatch(fine -> !fine.isPaid());
+    }
+
+    /**
+     * Üyenin ödenmemiş cezası varsa hata fırlatır
+     *
+     * @param memberId Kontrol edilecek üye
+     */
+    public void memberMustNotHaveUnpaidFines(UUID memberId) throws Exception {
+        if (hasUnpaidFines(memberId)) {
+            throw new Exception("Üyenin ödenmemiş cezası bulunduğu için işlem yapılamaz!");
+        }
+    }
 }
