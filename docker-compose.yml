@@ -3,10 +3,16 @@ services:
   #   image: tcell-config-server
   #   ports:
   #     - "8989:8989"
-  # discovery-server:
-  #   image: tcell-discovery-server
-  #   ports:
-  #     - "8761:8761"
+  discovery-server:
+    build: ./discovery-server
+    image: tcell-discovery-server
+    container_name: discovery-server
+    ports:
+      - "8761:8761"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - microservices-network
   # gateway-server:
   #   image: tcell-gateway-server
   #   ports:
@@ -107,6 +113,11 @@ services:
   #     - "8085:8085"
   #   depends_on:
   #     - membersv_db
+  #     - discovery-server
+  #   environment:
+  #     - SPRING_PROFILES_ACTIVE=docker
+  #   networks:
+  #     - microservices-network
   # reservation-service:
   #   image: tcell-reservation-service
   #   ports:
@@ -186,3 +197,5 @@ volumes:
 
 networks:
   kafkanet:
+  microservices-network:
+    driver: bridge

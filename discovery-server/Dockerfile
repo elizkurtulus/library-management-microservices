@@ -13,6 +13,10 @@ RUN mvn -U clean package -DskipTests
 
 FROM eclipse-temurin:21-jre AS runtime
 
+WORKDIR /app
+
 COPY --from=builder /build/target/*-SNAPSHOT.jar /app/app.jar
 
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+EXPOSE 8761
+
+ENTRYPOINT ["java", "-jar", "/app/app.jar", "--spring.profiles.active=docker"]
