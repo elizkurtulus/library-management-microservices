@@ -17,6 +17,18 @@ management:
       exposure:
         include: health,info
 
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5436/member_service
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: memberservice_db_password
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
 ---
 spring:
   config:
@@ -33,3 +45,15 @@ management:
     web:
       exposure:
         include: health,info
+
+spring:
+  datasource:
+    url: jdbc:postgresql://membersv_db:5432/member_service
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: memberservice_db_password
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: false

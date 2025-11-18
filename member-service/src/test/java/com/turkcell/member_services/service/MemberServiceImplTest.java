@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -129,6 +130,126 @@ class MemberServiceImplTest {
                 () -> memberService.deleteMember(1L));
         assertEquals("Üye bulunamadı!", exception.getMessage());
         verify(memberRepository, never()).deleteById(any());
+    }
+
+    @Test
+    void updateMember_Success() {
+        // Given
+        MemberRequest updateRequest = new MemberRequest();
+        updateRequest.firstName = "Mehmet";
+        updateRequest.lastName = "Demir";
+        updateRequest.email = "ahmet@example.com"; // Aynı email
+        updateRequest.phoneNumber = "5559876543";
+
+        when(memberRepository.findById(1L)).thenReturn(Optional.of(member));
+        when(memberRepository.existsByEmail(anyString())).thenReturn(false);
+        when(memberRepository.save(any(Member.class))).thenAnswer(invocation -> {
+            Member saved = invocation.getArgument(0);
+            saved.setId(1L);
+            return saved;
+        });
+
+        // When
+        MemberResponse response = memberService.updateMember(1L, updateRequest);
+
+        // Then
+        assertNotNull(response);
+        assertEquals(1L, response.id);
+        assertEquals("Mehmet", response.firstName);
+        assertEquals("Demir", response.lastName);
+        verify(memberRepository, times(1)).save(any(Member.class));
+    }
+
+    @Test
+    void updateMember_NotFound_ThrowsException() {
+        // Given
+        MemberRequest updateRequest = new MemberRequest();
+        when(memberRepository.findById(1L)).thenReturn(Optional.empty());
+
+        // When & Then
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> memberService.updateMember(1L, updateRequest));
+        assertEquals("Üye bulunamadı!", exception.getMessage());
+        verify(memberRepository, never()).save(any(Member.class));
+    }
+
+    @Test
+    void updateMember_DuplicateEmail_ThrowsException() {
+        // Given
+        MemberRequest updateRequest = new MemberRequest();
+        updateRequest.email = "newemail@example.com";
+
+        when(memberRepository.findById(1L)).thenReturn(Optional.of(member));
+        when(memberRepository.existsByEmail("newemail@example.com")).thenReturn(true);
+
+        // When & Then
+        IllegalStateException exception = assertThrows(IllegalStateException.class,
+                () -> memberService.updateMember(1L, updateRequest));
+        assertEquals("Bu e-posta adresine sahip başka bir üye zaten mevcut!", exception.getMessage());
+        verify(memberRepository, never()).save(any(Member.class));
+    }
+
+    @Test
+    void getMemberByMemberNumber_Success() {
+        // Given
+        when(memberRepository.findByMemberNumber("MEM001")).thenReturn(Optional.of(member));
+
+        // When
+        MemberResponse response = memberService.getMemberByMemberNumber("MEM001");
+
+        // Then
+        assertNotNull(response);
+        assertEquals(1L, response.id);
+        assertEquals("MEM001", response.memberNumber);
+        assertEquals("Ahmet", response.firstName);
+    }
+
+    @Test
+    void getMemberByMemberNumber_NotFound_ThrowsException() {
+        // Given
+        when(memberRepository.findByMemberNumber("MEM999")).thenReturn(Optional.empty());
+
+        // When & Then
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> memberService.getMemberByMemberNumber("MEM999"));
+        assertEquals("Üye bulunamadı!", exception.getMessage());
+    }
+
+    @Test
+    void getAllMembers_Success() {
+        // Given
+        Member member2 = new Member();
+        member2.setId(2L);
+        member2.setMemberNumber("MEM002");
+        member2.setFirstName("Ayşe");
+        member2.setLastName("Kaya");
+        member2.setEmail("ayse@example.com");
+        member2.setStatus(MemberStatus.ACTIVE);
+        member2.setCreatedAt(LocalDateTime.now());
+
+        when(memberRepository.findAll()).thenReturn(List.of(member, member2));
+
+        // When
+        List<MemberResponse> responses = memberService.getAllMembers();
+
+        // Then
+        assertNotNull(responses);
+        assertEquals(2, responses.size());
+        assertEquals("MEM001", responses.get(0).memberNumber);
+        assertEquals("MEM002", responses.get(1).memberNumber);
+    }
+
+    @Test
+    void getAllMembers_EmptyList() {
+        // Given
+        when(memberRepository.findAll()).thenReturn(List.of());
+
+        // When
+        List<MemberResponse> responses = memberService.getAllMembers();
+
+        // Then
+        assertNotNull(responses);
+        assertTrue(responses.isEmpty());
     }
 }
 
