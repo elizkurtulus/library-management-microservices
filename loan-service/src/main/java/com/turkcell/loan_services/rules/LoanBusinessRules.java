@@ -2,7 +2,6 @@ package com.turkcell.loan_services.rules;
 
 import com.turkcell.loan_services.entity.Loan;
 import com.turkcell.loan_services.repository.LoanRepository;
-import jakarta.ws.rs.NotFoundException;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -19,32 +18,32 @@ public class LoanBusinessRules {
 
     public Loan loanMustExist(UUID loanId) {
         return loanRepository.findById(loanId)
-                .orElseThrow(() -> new NotFoundException("Ödünç kaydı " + loanId + " bulunamadı!"));
+                .orElseThrow(() -> new IllegalArgumentException("Ödünç kaydı " + loanId + " bulunamadı!"));
     }
 
-    public void memberMustNotHaveActiveLoanForBook(UUID memberId, UUID bookId) throws Exception {
+    public void memberMustNotHaveActiveLoanForBook(UUID memberId, UUID bookId) {
         boolean hasActive = loanRepository.findByMemberId(memberId).stream()
                 .anyMatch(loan -> !loan.isReturned() && loan.getBookId().equals(bookId));
         if (hasActive) {
-            throw new Exception("Üyenin bu kitap için devam eden bir ödünç kaydı var.");
+            throw new IllegalStateException("Üyenin bu kitap için devam eden bir ödünç kaydı var.");
         }
     }
 
-    public void bookMustBeAvailable(UUID bookId) throws Exception {
+    public void bookMustBeAvailable(UUID bookId) {
         if (loanRepository.existsByBookIdAndReturnedFalse(bookId)) {
-            throw new Exception("Kitap şu anda ödünç verilemiyor.");
+            throw new IllegalStateException("Kitap şu anda ödünç verilemiyor.");
         }
     }
 
-    public void dueDateMustBeInFuture(Date dueDate) throws Exception {
+    public void dueDateMustBeInFuture(Date dueDate) {
         if (dueDate == null || dueDate.before(new Date())) {
-            throw new Exception("İade tarihi gelecekte olmalıdır.");
+            throw new IllegalArgumentException("İade tarihi gelecekte olmalıdır.");
         }
     }
 
-    public void loanMustNotBeReturned(Loan loan) throws Exception {
+    public void loanMustNotBeReturned(Loan loan) {
         if (loan.isReturned()) {
-            throw new Exception("Tamamlanan ödünç işlemi güncellenemez.");
+            throw new IllegalStateException("Tamamlanan ödünç işlemi güncellenemez.");
         }
     }
 }

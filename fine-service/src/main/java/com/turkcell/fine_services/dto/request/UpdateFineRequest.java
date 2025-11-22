@@ -20,7 +20,7 @@ public class UpdateFineRequest {
     @NotNull
     private UUID memberId;
 
-    public UUID id() {
+    public UUID getId() {
         return id;
     }
 

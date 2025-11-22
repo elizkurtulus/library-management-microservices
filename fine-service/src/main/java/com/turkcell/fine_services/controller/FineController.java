@@ -40,7 +40,7 @@ public class FineController {
      */
     @PostMapping("/{id}/pay")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void payFine(@PathVariable UUID id) throws Exception {
+    public void payFine(@PathVariable UUID id) {
         fineService.payFine(id);
     }
 
@@ -72,8 +72,8 @@ public class FineController {
      * @param id the unique identifier of the fine
      * @return a {@link GetByIdFineResponse} representing the fine details
      */
-    @GetMapping("{id}")
-    public GetByIdFineResponse getById(@PathVariable UUID id) throws Exception {
+    @GetMapping("/{id}")
+    public GetByIdFineResponse getById(@PathVariable UUID id) {
         return fineService.getById(id);
     }
 
@@ -92,7 +92,7 @@ public class FineController {
      *
      * @param id the unique identifier of the fine to be deleted
      */
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable UUID id) {
         fineService.delete(id);

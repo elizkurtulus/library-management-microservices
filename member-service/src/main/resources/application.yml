@@ -4,7 +4,17 @@ spring:
   profiles:
     active: dev
   config:
-    import: configserver:http://localhost:8787
+    import: optional:configserver:http://localhost:8787
+  datasource:
+    url: jdbc:postgresql://localhost:5436/member_service
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: memberservice_db_password
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
 
 eureka:
   client:
@@ -17,9 +27,14 @@ management:
       exposure:
         include: health,info
 
+---
 spring:
+  config:
+    activate:
+      on-profile: docker
+    import: configserver:http://config-server:8787
   datasource:
-    url: jdbc:postgresql://localhost:5436/member_service
+    url: jdbc:postgresql://membersv_db:5432/member_service
     driver-class-name: org.postgresql.Driver
     username: postgres
     password: memberservice_db_password
@@ -27,13 +42,7 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
-    show-sql: true
-
----
-spring:
-  config:
-    activate:
-      on-profile: docker
+    show-sql: false
 
 eureka:
   client:
@@ -45,15 +54,3 @@ management:
     web:
       exposure:
         include: health,info
-
-spring:
-  datasource:
-    url: jdbc:postgresql://membersv_db:5432/member_service
-    driver-class-name: org.postgresql.Driver
-    username: postgres
-    password: memberservice_db_password
-  jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-    hibernate:
-      ddl-auto: update
-    show-sql: false

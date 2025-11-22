@@ -4,4 +4,53 @@ spring:
   profiles:
     active: dev
   config:
-    import: configserver:http://localhost:8787
+    import: optional:configserver:http://localhost:8787
+  datasource:
+    url: jdbc:postgresql://localhost:5434/fine_service
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: fineservice_db_password
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+---
+spring:
+  config:
+    activate:
+      on-profile: docker
+    import: configserver:http://config-server:8787
+  datasource:
+    url: jdbc:postgresql://finesv_db:5432/fine_service
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: fineservice_db_password
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://discovery-server:8761/eureka
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

@@ -4,6 +4,7 @@ import com.turkcell.book_services.dto.BookRequest;
 import com.turkcell.book_services.dto.BookResponse;
 import com.turkcell.book_services.service.BookService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +23,8 @@ public class BookController {
     // Yeni kitap oluştur
     @PostMapping
     public ResponseEntity<BookResponse> createBook(@Valid @RequestBody BookRequest req) {
-        return ResponseEntity.ok(bookService.createBook(req));
+        BookResponse response = bookService.createBook(req);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     // Kitap bilgilerini güncelle

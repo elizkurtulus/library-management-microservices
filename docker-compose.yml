@@ -1,14 +1,21 @@
 services:
-  # config-server:
-  #   image: tcell-config-server
-  #   ports:
-  #     - "8989:8989"
+  config-server:
+    build: ./config-server
+    image: tcell-config-server
+    container_name: config-server
+    ports:
+      - "8787:8787"
+    networks:
+      - microservices-network
+
   discovery-server:
     build: ./discovery-server
     image: tcell-discovery-server
     container_name: discovery-server
     ports:
       - "8761:8761"
+    depends_on:
+      - config-server
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     networks:

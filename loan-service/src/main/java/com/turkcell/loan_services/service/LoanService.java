@@ -34,7 +34,7 @@ public class LoanService {
         this.loanBusinessRules = loanBusinessRules;
     }
 
-    public CreatedLoanResponse add(@Valid CreateLoanRequest createLoanRequest) throws Exception {
+    public CreatedLoanResponse add(@Valid CreateLoanRequest createLoanRequest) {
         loanBusinessRules.bookMustBeAvailable(createLoanRequest.getBookId());
         loanBusinessRules.memberMustNotHaveActiveLoanForBook(createLoanRequest.getMemberId(),
                 createLoanRequest.getBookId());
@@ -50,7 +50,7 @@ public class LoanService {
         return loanMapper.loanToCreatedLoanResponse(saved);
     }
 
-    public void update(UUID id, @Valid UpdateLoanRequest updateLoanRequest) throws Exception {
+    public void update(UUID id, @Valid UpdateLoanRequest updateLoanRequest) {
         Loan loan = loanBusinessRules.loanMustExist(id);
         loanBusinessRules.loanMustNotBeReturned(loan);
 
@@ -113,7 +113,7 @@ public class LoanService {
         return loanMapper.loanListToGetAllLoanResponseList(loans);
     }
 
-    public void markAsReturned(UUID id) throws Exception {
+    public void markAsReturned(UUID id) {
         Loan loan = loanBusinessRules.loanMustExist(id);
         loan.setReturned(true);
         loan.setReturnDate(new Date());

@@ -4,6 +4,7 @@ import com.turkcell.category_services.dto.CategoryRequest;
 import com.turkcell.category_services.dto.CategoryResponse;
 import com.turkcell.category_services.service.CategoryService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +23,8 @@ public class CategoryController {
     // Yeni kategori oluştur
     @PostMapping
     public ResponseEntity<CategoryResponse> createCategory(@Valid @RequestBody CategoryRequest req) {
-        return ResponseEntity.ok(categoryService.createCategory(req));
+        CategoryResponse response = categoryService.createCategory(req);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     // Kategori bilgilerini güncelle

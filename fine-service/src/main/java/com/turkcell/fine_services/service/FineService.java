@@ -11,7 +11,6 @@ import com.turkcell.fine_services.repository.FineRepository;
 import com.turkcell.fine_services.rules.FineBusinessRules;
 
 import jakarta.validation.Valid;
-import jakarta.ws.rs.NotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -28,10 +27,10 @@ public class FineService {
     private final FineBusinessRules fineBusinessRules;
     private final FineMapper fineMapper;
 
-    public FineService(FineRepository fineRepository, FineBusinessRules fineBusinessRules) {
+    public FineService(FineRepository fineRepository, FineBusinessRules fineBusinessRules, FineMapper fineMapper) {
         this.fineRepository = fineRepository;
         this.fineBusinessRules = fineBusinessRules;
-        this.fineMapper = FineMapper.INSTANCE;
+        this.fineMapper = fineMapper;
     }
 
     /**
@@ -53,10 +52,14 @@ public class FineService {
      * @param updateFineRequest the request containing updated fine details
      */
     public void update(@Valid UpdateFineRequest updateFineRequest) {
-        Fine fine = fineRepository.findById(updateFineRequest.id())
-                .orElseThrow(() -> new NotFoundException("Ceza " + updateFineRequest.id() + " bulunamadı!"));
+        Fine fine = fineRepository.findById(updateFineRequest.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Ceza " + updateFineRequest.getId() + " bulunamadı!"));
         fine.setAmount(updateFineRequest.getAmount());
         fine.setPaid(updateFineRequest.isPaid());
+
+        if (updateFineRequest.getMemberId() != null) {
+            fine.setMemberId(updateFineRequest.getMemberId());
+        }
 
         fineRepository.save(fine);
     }
@@ -67,9 +70,9 @@ public class FineService {
      * @param id the unique identifier of the fine
      * @return a {@link GetByIdFineResponse} containing details of the found fine
      */
-    public GetByIdFineResponse getById(UUID id) throws Exception {
+    public GetByIdFineResponse getById(UUID id) {
         Fine fine = fineRepository.findById(id)
-                .orElseThrow(() -> new Exception("Ceza " + id + " bulunamadı!"));
+                .orElseThrow(() -> new IllegalArgumentException("Ceza " + id + " bulunamadı!"));
 
         return fineMapper.fineToGetByIdFineResponse(fine);
     }
@@ -109,9 +112,9 @@ public class FineService {
      *
      * @param fineId the unique identifier of the fine
      */
-    public void payFine(UUID fineId) throws Exception {
+    public void payFine(UUID fineId) {
         Fine fine = fineRepository.findById(fineId)
-                .orElseThrow(() -> new Exception("Ceza " + fineId + " bulunamadı!"));
+                .orElseThrow(() -> new IllegalArgumentException("Ceza " + fineId + " bulunamadı!"));
 
         fine.setPaid(true);
         fineRepository.save(fine);
@@ -120,12 +123,12 @@ public class FineService {
     /**
      * Creates a fine with a fixed amount (e.g., for lost or damaged books).
      *
-     * @param memberId the unique identifier of the member
+     * @param memberId    the unique identifier of the member
      * @param fixedAmount the fixed fine amount (must be positive)
      * @param description an optional description of the fine (e.g., reason)
      * @return a {@link CreatedFineResponse} with details of the created fine
      */
-    public CreatedFineResponse createFixedFine(UUID memberId, double fixedAmount, String description) throws Exception {
+    public CreatedFineResponse createFixedFine(UUID memberId, double fixedAmount, String description) {
         // Üye kontrolü
 
         // Ceza miktarı pozitif olmalı
@@ -137,8 +140,8 @@ public class FineService {
         Fine fine = new Fine();
         fine.setAmount(fixedAmount);
         fine.setPaid(false);
-
-        // Açıklama alanı eklemek için ileride genişletilebilir
+        fine.setMemberId(memberId);
+        // Staff ID ve description alanı eklemek için ileride genişletilebilir
 
         fine = fineRepository.save(fine);
 
@@ -152,7 +155,7 @@ public class FineService {
      * @return {@code true} if the member has unpaid fines, otherwise {@code false}
      */
     public boolean hasUnpaidFines(UUID memberId) {
-        //Member member = memberBusinessRules.memberShouldExistWithGivenId(memberId);
+        // Member member = memberBusinessRules.memberShouldExistWithGivenId(memberId);
         return fineBusinessRules.hasUnpaidFines(memberId);
     }
 }

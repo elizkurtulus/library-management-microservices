@@ -1,6 +1,5 @@
 package com.turkcell.loan_services.controller;
 
-import com.turkcell.loan_services.client.BookClient;
 import com.turkcell.loan_services.dto.request.CreateLoanRequest;
 import com.turkcell.loan_services.dto.request.UpdateLoanRequest;
 import com.turkcell.loan_services.dto.response.CreatedLoanResponse;
@@ -19,22 +18,20 @@ import java.util.UUID;
 public class LoansController {
 
     private final LoanService loanService;
-    private final BookClient bookClient;
 
-    public LoansController(LoanService loanService, BookClient bookClient) {
+    public LoansController(LoanService loanService) {
         this.loanService = loanService;
-        this.bookClient = bookClient;
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CreatedLoanResponse add(@Valid @RequestBody CreateLoanRequest request) throws Exception {
+    public CreatedLoanResponse add(@Valid @RequestBody CreateLoanRequest request) {
         return loanService.add(request);
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@PathVariable UUID id, @Valid @RequestBody UpdateLoanRequest request) throws Exception {
+    public void update(@PathVariable UUID id, @Valid @RequestBody UpdateLoanRequest request) {
         loanService.update(id, request);
     }
 
@@ -43,7 +40,7 @@ public class LoansController {
         return loanService.getById(id);
     }
 
-    @GetMapping("/loans")
+    @GetMapping
     public List<GetAllLoanResponse> getAll() {
         return loanService.getAll();
     }
@@ -61,13 +58,7 @@ public class LoansController {
 
     @PostMapping("/{id}/return")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void markAsReturned(@PathVariable UUID id) throws Exception {
+    public void markAsReturned(@PathVariable UUID id) {
         loanService.markAsReturned(id);
-    }
-
-    @GetMapping
-    public String get(@RequestParam String name) {
-        String responseFromBookClient = bookClient.get(name);
-        return "Bu konsoldaki loan service çalıştı." + responseFromBookClient;
     }
 }
